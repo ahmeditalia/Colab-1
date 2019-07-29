@@ -1,36 +1,34 @@
 import React, {Component} from 'react';
-
 import {Button, Form, Modal} from "react-bootstrap";
 import {connect} from "react-redux";
+import {signIn} from "../../store/actions/authenticationActions/signInAction"
 import {withRouter} from "react-router-dom";
-
-import {signInAction} from "../../store/actions/authentication/signInAction"
-
-import {PASSWORD, USERNAME} from "../../store/data/mapping/user";
-import {DASHBOARD_URL} from "../../store/data/mapping/URL";
-import {AUTHENTICATION_ERROR, CLEAR_SIGN_IN_ERROR} from "../../store/data/mapping/auth";
-import {CLOSE_FORM, SIGN_IN_FORM} from "../../store/data/mapping/form";
+import {PASSWORD, USERNAME} from "../../store/dataMapping/user";
+import {DASHBOARD_URL} from "../../store/dataMapping/URL";
+import {AUTHENTICATION_ERROR, CLEAR_SIGN_IN_ERROR} from "../../store/dataMapping/auth";
+import {CLOSE_FORM, SIGN_IN_FORM} from "../../store/dataMapping/form";
 
 class SignIn extends Component {
+
     state = {
         [USERNAME]: "",
         [PASSWORD]: "",
     };
 
-    changeState = (e) => {
+    changeState = (e)=>{
         this.props.clearErrorMessage();
         this.setState({[e.target.id]: e.target.value});
     };
 
-    close = () => {
+    close = ()=>{
         this.props.closeSignIn();
         this.props.clearErrorMessage();
     };
 
-    logIn = (e) => {
-        if (e.currentTarget.checkValidity()) {
+    logIn = (e)=>{
+        if(e.currentTarget.checkValidity()) {
             e.preventDefault();
-            this.props.signIn(this.state, () => {
+            this.props.signIn(this.state,()=>{
                 this.props.closeSignIn();
                 this.props.history.push(DASHBOARD_URL);
             });
@@ -38,88 +36,52 @@ class SignIn extends Component {
     };
 
     render() {
-        if (this.props.authenticated) {
+        if(this.props.authenticated){
             this.props.history.push(DASHBOARD_URL);
-        } else return (
-            <Modal
-                {...this.props}
-                style={{color: "black"}}
-                centered
-                show={this.props.display}
-                onHide={this.close}
-            >
+        }
+        else return (
+            <Modal {...this.props} style={{color:"black"}} centered show={this.props.display} onHide={this.close}>
                 <Modal.Header closeButton>
                     <Modal.Title>
                         Sign In
                     </Modal.Title>
                 </Modal.Header>
-
                 <Modal.Body>
                     <Form id={"sign_in_form"} onSubmit={this.logIn} validated={true}>
-                        <Form.Group controlId={USERNAME}>
-                            <Form.Label column={false}>
-                                Username
-                            </Form.Label>
-
-                            <small>
-                                {this.state[USERNAME + "Error"]}
-                            </small>
-
-                            <Form.Control
-                                required
-                                type="text"
-                                placeholder="Username"
-                                onChange={this.changeState}
-                            />
+                    <Form.Group controlId= {USERNAME}>
+                            <Form.Label column={false}>Username</Form.Label><small>{this.state[USERNAME+"Error"]}</small>
+                            <Form.Control required type="text" placeholder="Username" onChange={this.changeState}/>
                         </Form.Group>
-
                         <Form.Group controlId={PASSWORD}>
-                            <Form.Label column={false}>
-                                Password
-                            </Form.Label>
-
-                            <small>
-                                {this.state[PASSWORD + "Error"]}
-                            </small>
-
-                            <Form.Control
-                                required
-                                ype="password"
-                                placeholder="Password"
-                                onChange={this.changeState}
-                            />
+                            <Form.Label column={false}>Password</Form.Label><small>{this.state[PASSWORD+"Error"]}</small>
+                            <Form.Control required type="password" placeholder="Password" onChange={this.changeState}/>
                         </Form.Group>
+                        <small>{this.props.error}</small>
 
-                        <small>
-                            {this.props.error}
-                        </small>
                     </Form>
                 </Modal.Body>
-
                 <Modal.Footer>
-                    <Button form="sign_in_form" type={"submit"} variant="success">
-                        Sign In
-                    </Button>
+                    <Button form="sign_in_form" type={"submit"} variant="success">Sign In</Button>
                 </Modal.Footer>
             </Modal>
         );
     }
 }
 
-const mapStateToProps = (combinedReducer) => {
-    return {
+const mapStateToProps = (combinedReducer)=>{
+    return{
         authenticated: combinedReducer.auth.authenticated,
         display: combinedReducer.forms[SIGN_IN_FORM],
         error: combinedReducer.auth[AUTHENTICATION_ERROR]
     }
 };
 
-const mapDispatchToProps = (dispatch) => {
-    return {
-        signIn: (signInData, callback) => dispatch(signInAction(signInData, callback)),
-        clearErrorMessage: () => dispatch({type: CLEAR_SIGN_IN_ERROR}),
-        closeSignIn: () => dispatch({type: SIGN_IN_FORM, payload: CLOSE_FORM})
+const mapDispatchToProps = (dispatch)=>{
+    return{
+        signIn: (signInData,callback) => dispatch(signIn(signInData,callback)),
+        clearErrorMessage: ()=>dispatch({type: CLEAR_SIGN_IN_ERROR}),
+        closeSignIn: ()=> dispatch({type:SIGN_IN_FORM, payload: CLOSE_FORM}),
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(SignIn));
+export default connect(mapStateToProps,mapDispatchToProps)(withRouter(SignIn));

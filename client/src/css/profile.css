@@ -1,21 +1,20 @@
-.profile {
+.profile{
     justify-content: center;
     display: flex;
     margin-top: 50px;
     color: black;
 }
 
-.informationCard {
+.informationCard{
     margin: 10px 10px 10px 10px;
     width: 700px;
 }
-
-.pictureCard {
+.pictureCard{
     margin: 10px 10px 10px 10px;
     /*height: 60%;*/
 }
 
-.imageDiv {
+.imageDiv{
     margin: 10px;
     border-radius: 50%;
     height: 200px;
@@ -23,8 +22,7 @@
     position: relative;
     overflow: hidden;
 }
-
-.imageBody {
+.imageBody{
     z-index: 1;
     position: absolute;
     background-color: white;
@@ -33,36 +31,33 @@
     transform: translateY(calc(80px));
     transition: transform 0.3s;
 }
-
-.imageDiv:hover .imageBody {
+.imageDiv:hover .imageBody{
     transform: translateY(0);
 }
 
-.Body {
+.Body{
     text-align: center;
     margin-bottom: 10px;
 }
-
-.previewImage {
+.previewImage{
+    width: 170px;
+    height: 170px;
+    object-fit: cover;
+}
+.myImage{
     width: 170px;
     height: 170px;
     object-fit: cover;
 }
 
-.myImage {
-    width: 170px;
-    height: 170px;
-    object-fit: cover;
-}
-
-.myImage:hover {
+.myImage:hover{
     opacity: 0.8;
     width: 170px;
     height: 170px;
     object-fit: cover;
 }
 
-.preview {
+.preview{
     align-content: center;
     display: flex;
     flex-direction: column;

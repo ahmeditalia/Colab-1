@@ -1,39 +1,43 @@
-import React, {Component} from 'react';
-
-import {CardColumns} from "react-bootstrap";
-import {connect} from "react-redux";
-
+import React, { Component } from 'react';
 import DashboardCard from "./DashboardCard";
+import {CardColumns, Spinner} from "react-bootstrap";
+import {connect} from "react-redux";
+import {getPublicSessions} from "../../store/actions/sessionActions/getPublicSessionsAction";
+import {PUBLIC_SESSIONS} from "../../store/dataMapping/session";
 
-import {getPublicSessionsAction} from "../../store/actions/session/getPublicSessionsAction";
 
-import {PUBLIC_SESSIONS} from "../../store/data/mapping/session";
+class Dashboard extends Component{
 
-class Dashboard extends Component {
-    componentWillMount() {
+
+    componentDidMount() {
         this.props.getSessions();
     }
 
     render() {
-        if (!this.props[PUBLIC_SESSIONS]) {
-            return <h2> Loading... </h2>;
-        }
-        else {
-            return (<CardColumns> {
-                    this.props[PUBLIC_SESSIONS].map((session) => <DashboardCard session={session}/>)
-                }
-                </CardColumns>
-            );
-        }
-    };
+
+        if (!this.props[PUBLIC_SESSIONS])
+            return <div className={"loading"}>
+                <Spinner animation={"border"}/>
+            </div>;
+        else return (
+            <CardColumns>
+                {this.props[PUBLIC_SESSIONS].map((session) => <DashboardCard session={session}/>)}
+            </CardColumns>
+        );
+    }
 }
 
-const mapStateToProps = (combineReducers) => {
-    return {[PUBLIC_SESSIONS]: combineReducers.sessionStorage[PUBLIC_SESSIONS]}
+
+const mapStateToProps = (combineReducers)=>{
+    return {
+        [PUBLIC_SESSIONS]: combineReducers.sessionStorage[PUBLIC_SESSIONS]
+    }
 };
 
-const mapDispatchToProps = (dispatch) => {
-    return {getSessions: () => dispatch(getPublicSessionsAction())}
+const mapDispatchToProps = (dispatch)=>{
+    return {
+        getSessions: ()=> dispatch(getPublicSessions(""))
+    }
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);
+export default connect(mapStateToProps,mapDispatchToProps)(Dashboard);

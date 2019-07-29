@@ -1,67 +1,63 @@
 import React, {Component} from "react";
-
-import {Form} from "react-bootstrap";
-import {connect} from "react-redux";
-
 import ProfileImage from "./ProfileImage";
+import {getProfile} from "../../store/actions/profileActions/getProfileAction";
 import ProfileInfo from "./ProfileInfo";
-
-import {getProfileAction} from "../../store/actions/profile/getProfileAction";
-import {updateProfileAction} from "../../store/actions/profile/updateProfileAction";
-
-import Authenticate from "../authentication/Authenticate";
+import {connect} from "react-redux";
+import { Form, Spinner} from "react-bootstrap";
+import {updateProfile} from "../../store/actions/profileActions/updateProfileAction";
+import requireAuth from "../authentication/requireAuth";
 
 class UserProfile extends Component {
-    state = {validated: false, loaded: false};
+
+    state ={
+        validated: false,
+        loaded: false
+    };
 
     componentWillMount() {
-        this.props.getProfile(() => {
-                this.setState({loaded:true})
-            }
-        );
+        this.props.getProfile(()=>{
+            this.setState({loaded:true})
+        });
     }
-
     componentWillUnmount() {
-        this.setState({loaded: false})
+        this.setState({loaded:false})
     }
 
-    saveChanges = (e) => {
+    saveChanges = (e)=>{
         e.preventDefault();
-        if (e.currentTarget.checkValidity()) {
+        if(e.currentTarget.checkValidity()) {
             this.props.updateProfile(this.props.user, this.props.history);
         }
         this.setState({validated: true});
     };
 
     render() {
-        if (!this.props.user) {
-            return <h2>Loading...</h2>;
+        if(!this.state.loaded && !this.props.user) {
+            return <div className={"loading"}>
+                <Spinner animation={"border"}/>
+            </div>;
         }
-        else {
+        else{
             return (
-                <Form
-                    id={"profile_form"}
-                    className={"profileReducer.jsx"}
-                    onSubmit={this.saveChanges}
-                    noValidate
-                    validated={this.state.validated}>
+                <Form id={"profile_form"} className={"profile"} onSubmit={this.saveChanges} noValidate validated={this.state.validated}>
                     <ProfileImage/>
                     <ProfileInfo/>
                 </Form>
-            )
-        }
+            )}
     }
 }
 
-const mapStateToProps = (combinedReducers) => {
-    return {user: combinedReducers.profileReducer.profileReducer}
-};
-
-const mapDispatchToProps = (dispatch) => {
+const mapStateToProps = (combinedReducers)=>{
     return {
-        getProfile: (callback) => dispatch(getProfileAction(callback)),
-        updateProfile: (profile, history) => dispatch(updateProfileAction(profile, history))
+        user: combinedReducers.profile.profile
     }
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Authenticate(UserProfile));
+const mapDispatchToProps = (dispatch)=>{
+    return {
+        getProfile: (callback)=> dispatch(getProfile(callback)),
+        updateProfile: (profile,history)=> dispatch(updateProfile(profile,history))
+    }
+};
+
+export default connect(mapStateToProps,mapDispatchToProps)(requireAuth(UserProfile));
